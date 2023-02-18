@@ -1,0 +1,20 @@
+div.filtro-busca {
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: baseline;
+  min-width: 25px;
+  max-width: 900px;
+  width: 80vw;
+
+  form.form {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    .full-width {
+      width: 50vw;
+    }
+  }
+}

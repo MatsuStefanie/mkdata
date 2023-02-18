@@ -1,0 +1,93 @@
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+  </ng-container>
+  <ng-container matColumnDef="situacao">
+    <th mat-header-cell *matHeaderCellDef> situação</th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element">
+        <mat-icon>block</mat-icon>
+        Inativo
+      </span>
+      <span *ngIf="element">
+        <mat-icon>done</mat-icon>
+        Ativo
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">Detalhes</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element);
+        $event.stopPropagation()">
+        <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+      <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+        <div class="element-collunm">
+          <span *ngIf="!element.situacao">
+            <mat-icon>block</mat-icon>
+            Inativo
+          </span>
+          <span *ngIf="element.situacao">
+            <mat-icon color="success">done</mat-icon>
+            Ativo
+          </span>
+
+          <div class="element-nome">Cliente:{{element.nome}}</div>
+          <div class="element-tipoFederativo">
+            Tipo de Pessoa:
+            <span *ngIf="element.tipoFederativo==='CPF'">Fisica</span>
+            <span *ngIf="element.tipoFederativo==='CNPJ'">Juridica</span>
+          </div>
+        </div>
+        <div class="element-collunm">
+          <div class="element-identificacaoFederal">
+            <span *ngIf="element.tipoFederativo==='CPF'">CPF:</span>
+            <span *ngIf="element.tipoFederativo==='CNPJ'">CNPJ:</span>
+            {{element.identificacaoFederal}}
+          </div>
+          <div class="element-registro">
+            <span *ngIf="element.tipoFederativo==='CPF'">RG:</span>
+            <span *ngIf="element.tipoFederativo==='CNPJ'">IE:</span>
+            {{element.registro}}
+          </div>
+        </div>
+        <div class="element-collunm">
+          <div class="element-telephone">
+            Telefone:
+            <div *ngFor="let telefone of element.telefones">
+              {{telefone.pais}} ({{telefone.ddd}}) {{telefone.numero}}
+              <mat-icon *ngIf="telefone.principal">done</mat-icon>
+            </div>
+          </div>
+        </div>
+
+        <div class="element-collunm">
+          <div class="actions">
+            <button mat-fab color="secundary" aria-label="Add new iten on table" (click)="openConfirm(element.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-fab color="secundary" aria-label="Add new iten on table">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="element-row" [class.expanded-row]="expandedElement === element" (click)="expandedElement = expandedElement === element ? null : element">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+
+</table>

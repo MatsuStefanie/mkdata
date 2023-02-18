@@ -1,0 +1,5 @@
+<header>
+<app-filter-table-list (filterText)="filterByText($event)" (filterMenu)="filterByMenu($event)" />
+<app-actions-table/>
+</header>
+<app-table-list [dataSource]="base" />

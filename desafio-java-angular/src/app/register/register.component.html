@@ -1,0 +1,56 @@
+<div class="card" style="width: 18rem">
+  <div class="card-body">
+    <h3 class="card-title">Cadastrar novo</h3>
+    <form (ngSubmit)="onRegister()" [formGroup]="register">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Nome completo</mat-label>
+        <input matInput formControlName="nome" name="nome" focused required>
+      </mat-form-field>
+      <div class="type">
+        <mat-form-field appearance="fill">
+          <mat-label>Tipo</mat-label>
+          <mat-select formControlName="tipoFederativo" required>
+            <mat-option [value]="physicPerson">Pessoa fisica</mat-option>
+            <mat-option [value]="legalPerson">Pessoa Juridica</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox formControlName="situacao" name="situacao" color="primary"> Ativo</mat-checkbox>
+      </div>
+
+      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===physicPerson">
+        <mat-label>CPF</mat-label>
+        <input matInput formControlName="identificacaoFederal" [name]="physicPerson" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===legalPerson">
+        <mat-label>CNPJ</mat-label>
+        <input matInput formControlName="identificacaoFederal" [name]="legalPerson" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===physicPerson">
+        <mat-label>RG</mat-label>
+        <input matInput formControlName="registro" name="rg" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===legalPerson">
+        <mat-label>IE</mat-label>
+        <input matInput formControlName="registro" name="ie" required>
+      </mat-form-field>
+
+      <div class="listPhone">
+        <app-telephone *ngIf="register.valid" (end)="end($event)" (telephone)="setListPhone($event)" />
+        <app-simple-table *ngIf="register.valid" [obsItems]="obsListPhone" />
+      </div>
+
+      <button mat-raised-button [disabled]="disabledButton" type="submit" color="primary">
+        Cadastrar
+      </button>
+      <button mat-raised-button (click)="backHome()" style="margin-left: 2vw;">
+      Cancelar
+    </button>
+    </form>
+
+
+
+  </div>
+</div>

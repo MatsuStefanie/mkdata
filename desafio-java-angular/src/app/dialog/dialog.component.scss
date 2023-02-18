@@ -1,0 +1,56 @@
+div.dialog {
+  border-radius: 10%;
+  height: fit-content;
+  div.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: baseline;
+    height: fit-content;
+    margin: 2vw auto;
+    h1 {
+      margin: 0;
+      font-weight: bold;
+    }
+    mat-button mat-button-base mat-dialog-close {
+      background-color: transparent;
+      width: min-content;
+    }
+  }
+  mat-dialog-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 2.5rem;
+    text-align: center;
+    margin: 0 30px;
+    height: fit-content;
+  }
+  mat-dialog-actions {
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    justify-content: space-evenly;
+  }
+}
+
+::ng-deep .cdk-overlay-pane {
+  max-width: 40vw !important;
+}
+
+@media (max-width: 880px) {
+  .dialog {
+    .mat-dialog-content {
+      margin: 0 1%;
+    }
+  }
+  ::ng-deep .cdk-overlay-pane {
+    max-width: 90vw !important;
+  }
+}
