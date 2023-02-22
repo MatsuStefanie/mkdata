@@ -15,15 +15,13 @@ export class SimpleTableComponent implements OnInit {
   items: Array<Phone> = [];
 
   @Input()
-  obsItems: Observable<Array<Phone>> = new Observable();
+  items$: Observable<Array<Phone>> = new Observable();
 
   constructor(public dialog: MatDialog) {}
 
   ngOnInit() {
-    console.log(this.items);
-    this.obsItems.subscribe({ next: (item) => (this.items = item) });
+    this.items$.subscribe({ next: (item) => (this.items = item) });
   }
-  buscaTelephone() {}
 
   deletePhone(phone: Phone) {
     const dialogRef = this.dialog.open(DialogComponent, {

@@ -4,11 +4,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: 'new', component: RegisterComponent }, { path: '', component: TableComponent },
+  { path: 'new', component: RegisterComponent },
+  { path: 'edit/:id', component: RegisterComponent },
+  { path: '', component: TableComponent },
+  { path: '**', component: TableComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

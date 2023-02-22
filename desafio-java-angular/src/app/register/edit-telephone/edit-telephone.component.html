@@ -1,0 +1,17 @@
+<form [formGroup]="formTelephone" class="phone" (ngSubmit)="editTelephones(formTelephone.controls['telefone'].value)">
+  <mat-form-field class="size" appearance="fill">
+    <mat-label>Telefone</mat-label>
+    <span matPrefix>+55&nbsp;</span>
+    <input matInput formControlName="telefone" name="telefone" minlength="10" maxlength="11" placeholder="11999999999">
+    <mat-icon matSuffix>phone</mat-icon>
+    <mat-hint>
+      Digite apenas os números sem caracteres
+    </mat-hint>
+  </mat-form-field>
+  <button mat-fab color="primary" aria-label="Add a edition item on table" type="submit" [disabled]="!formTelephone.valid">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-fab color="secundary" aria-label="Delete the item on table" (click)="deleteTelephone()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</form>

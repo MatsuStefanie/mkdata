@@ -46,7 +46,6 @@ export class TelephoneComponent implements OnInit {
       : this.openInfo();
   }
   addSuccess(info: string) {
-    console.log('passou aqui', this.arrayTelephone, info);
     this.arrayTelephone.push(
       new Phone('+55', info.slice(0, 2), info.slice(2, 11), false)
     );

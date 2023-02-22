@@ -2,7 +2,6 @@ import { DialogComponent } from './dialog/dialog.component';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { DialogModule } from '@angular/cdk/dialog';
 import { RegisterModule } from './register/register.module';
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 

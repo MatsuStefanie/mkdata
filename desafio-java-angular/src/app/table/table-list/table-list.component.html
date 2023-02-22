@@ -6,11 +6,11 @@
   <ng-container matColumnDef="situacao">
     <th mat-header-cell *matHeaderCellDef> situação</th>
     <td mat-cell *matCellDef="let element">
-      <span *ngIf="!element">
+      <span *ngIf="!element.situacao">
         <mat-icon>block</mat-icon>
         Inativo
       </span>
-      <span *ngIf="element">
+      <span *ngIf="element.situacao">
         <mat-icon>done</mat-icon>
         Ativo
       </span>
@@ -76,7 +76,7 @@
             <button mat-fab color="secundary" aria-label="Add new iten on table" (click)="openConfirm(element.id)">
               <mat-icon>delete</mat-icon>
             </button>
-            <button mat-fab color="secundary" aria-label="Add new iten on table">
+            <button mat-fab color="secundary" aria-label="Add new iten on table" (click)="editClient(element.id)">
               <mat-icon>edit</mat-icon>
             </button>
           </div>

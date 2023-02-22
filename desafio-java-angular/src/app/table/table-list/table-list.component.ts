@@ -1,6 +1,8 @@
+
+import { Router, ActivatedRoute } from '@angular/router';
 import { DialogComponent } from './../../dialog/dialog.component';
 import { TableService } from './../table.service';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import {
   animate,
   state,
@@ -26,16 +28,28 @@ import { MatDialog } from '@angular/material/dialog';
     ]),
   ],
 })
-export class TableListComponent {
+export class TableListComponent implements OnInit{
   @Input()
   dataSource!: Array<Custumer>;
   columnsToDisplay = ['id', 'nome', 'tipoFederativo'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'situacao', 'expand'];
   expandedElement?: Custumer | null;
 
-  constructor(private tableService: TableService, public dialog: MatDialog) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private tableService: TableService,
+    public dialog: MatDialog
+  ) {}
 
-  openConfirm(id:number) {
+  @Output()
+  deleteItem = new EventEmitter<boolean>();
+
+  ngOnInit() {
+
+  }
+
+  openConfirm(id: number) {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         message: 'Tem certeza disso?',
@@ -45,12 +59,12 @@ export class TableListComponent {
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      result? this.delete(id) : this.openCancel();
+      result ? this.delete(id) : this.openCancel();
     });
   }
 
   openSuccess() {
-   this.dialog.open(DialogComponent, {
+    this.dialog.open(DialogComponent, {
       data: {
         message: 'Cliente deletado com sucesso',
         title: 'Sucesso',
@@ -58,6 +72,7 @@ export class TableListComponent {
       },
     });
   }
+
   openCancel() {
     this.dialog.open(DialogComponent, {
       data: {
@@ -67,15 +82,20 @@ export class TableListComponent {
       },
     });
   }
+
   delete(id: number) {
     this.tableService.deletarUser(id).subscribe({
-      next: (response) => {
-      this.openSuccess();
-      console.log(response)
+      next: () => {
+        this.openSuccess();
+        this.deleteItem.emit(true);
       },
       error: (error) => {
         //openDialog error
       },
     });
+  }
+
+  editClient(id: number) {
+    this.router.navigate(['/edit',  id ]);
   }
 }

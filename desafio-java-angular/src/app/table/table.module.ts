@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../material.module';
 import { ActionsTableComponent } from './actions-table/actions-table.component';
 import { FilterTableListComponent } from './filter-table-list/filter-table-list.component';
+import { EditSimpleTableComponent } from './edit-simple-table/edit-simple-table.component';
 
 @NgModule({
   declarations: [
@@ -19,8 +20,9 @@ import { FilterTableListComponent } from './filter-table-list/filter-table-list.
     FilterTableListComponent,
     ActionsTableComponent,
     SimpleTableComponent,
+    EditSimpleTableComponent
   ],
-  exports: [TableComponent, SimpleTableComponent],
+  exports: [TableComponent, SimpleTableComponent,EditSimpleTableComponent],
   imports: [
     CommonModule,
     FormsModule,

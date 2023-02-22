@@ -4,7 +4,7 @@
       <mat-label>Pesquise aqui</mat-label>
       <input matInput formControlName="busca" name="busca" autocomplete="off" id="busca" placeholder="Nome ou CPF/CNPJ" />
 
-      <button *ngIf="formSearch.controls['busca'].value" matSuffix mat-icon-button aria-label="Clear" (click)="cleanFilter()">
+      <button *ngIf="formSearch.controls['busca'].value" matSuffix mat-icon-button aria-label="Clear" (click)="cleanText()">
         <mat-icon>close</mat-icon>
       </button>
 
@@ -21,32 +21,28 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="filterByMenuSituacao(situacao)">
+  <button mat-menu-item (click)="filterSituacao(situacaoAtivo)">
     <mat-slide-toggle color="primary" [(ngModel)]="ativo">
       <span>Ativo</span>
     </mat-slide-toggle>
   </button>
-  <button mat-menu-item (click)="filterByMenuSituacao(situacao)">
+  <button mat-menu-item (click)="filterSituacao(situacaoInativo)">
     <mat-slide-toggle color="primary" [(ngModel)]="inativo">
       <span>Inativo</span>
     </mat-slide-toggle>
   </button>
-  <button mat-menu-item (click)="filterByMenuTipo(tipo)">
+  <button mat-menu-item (click)="filterTipo(tipoCPF)">
     <mat-slide-toggle color="primary" [(ngModel)]="cpf">
       <span>CPF</span>
     </mat-slide-toggle>
   </button>
-  <button mat-menu-item (click)="filterByMenuTipo(tipo)">
+  <button mat-menu-item (click)="filterTipo(tipoCNPJ)">
     <mat-slide-toggle color="primary" [(ngModel)]="cnpj">
       <span>CNPJ</span>
     </mat-slide-toggle>
   </button>
-  <button mat-menu-item>
+  <button mat-menu-item (click)="unselectAll()">
     <mat-icon>filter_alt_off</mat-icon>
     <span>Limpar filtro</span>
-  </button>
-  <button mat-menu-item (click)="selectAll()">
-    <mat-icon>filter_alt</mat-icon>
-    <span>Todos filtros</span>
   </button>
 </mat-menu>

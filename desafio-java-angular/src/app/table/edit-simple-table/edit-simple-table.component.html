@@ -1,0 +1,9 @@
+<div class="size" *ngIf="dataPhone.length>0">
+  <p >Telefones:</p>
+  <mat-chip-listbox>
+    <mat-chip color="primary" *ngFor="let chip of dataPhone" (click)="updatePhone(chip.id)">
+      {{chip.numero}}
+    </mat-chip>
+  </mat-chip-listbox>
+
+</div>

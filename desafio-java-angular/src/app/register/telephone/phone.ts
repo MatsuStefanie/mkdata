@@ -12,10 +12,11 @@ export class Phone {
   numero: string;
   principal: boolean;
 
-  constructor(pais: string, ddd: string, numero: string, principal: boolean) {
+  constructor(pais: string, ddd: string, numero: string, principal: boolean, id?:number) {
     this.pais = pais;
     this.ddd = ddd;
     this.numero = numero;
     this.principal = principal;
+    this.id=id;
   }
 }

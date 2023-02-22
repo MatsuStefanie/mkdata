@@ -1,5 +1,6 @@
 <header>
-<app-filter-table-list (filterText)="filterByText($event)" (filterMenu)="filterByMenu($event)" />
+<app-filter-table-list (filterText)="filterByText($event)" (filterMenu)="filterByMenu($event)"
+(emitter)="clear($event)"/>
 <app-actions-table/>
 </header>
-<app-table-list [dataSource]="base" />
+<app-table-list [dataSource]="base" (deleteItem)="rebase($event)"/>

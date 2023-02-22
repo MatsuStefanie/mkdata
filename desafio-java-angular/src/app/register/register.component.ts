@@ -1,7 +1,7 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DialogComponent } from './../dialog/dialog.component';
 
-import {  BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, switchMap, Observable } from 'rxjs';
 import { Phone } from './telephone/phone';
 import { MatDialog } from '@angular/material/dialog';
 import { Custumer, TipoFederativo } from './custumer';
@@ -15,41 +15,101 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-  register!: FormGroup;
+  formRegister!: FormGroup;
+  customer!: Custumer;
+  idClient!: number;
 
   physicPerson = TipoFederativo.CPF;
   legalPerson = TipoFederativo.CNPJ;
+
   showModalPhone: boolean = false;
   disabledButton: boolean = true;
+  isRegister: boolean = true;
+
   listPhone: Array<Phone> = [];
-  obsListPhone: BehaviorSubject<Array<Phone>> = new BehaviorSubject(
+  listPhone$: BehaviorSubject<Array<Phone>> = new BehaviorSubject(
     this.listPhone
   );
+
+  phone: Phone = new Phone('+55', '', '', false);
+  phone$: BehaviorSubject<Phone> = new BehaviorSubject(this.phone);
+  remove$: BehaviorSubject<number> = new BehaviorSubject(0);
+
   constructor(
+    private route: ActivatedRoute,
     private registerService: RegisterService,
     private formBuilder: FormBuilder,
     public dialog: MatDialog,
-    private router:Router
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.register = this.formBuilder.group({
+    this.formRegister = this.formBuilder.group({
       nome: ['', [Validators.required]],
       tipoFederativo: ['', [Validators.required]],
       identificacaoFederal: ['', [Validators.required]],
       registro: ['', Validators.required],
       situacao: [true, Validators.required],
     });
+    this.idClient = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.idClient) {
+      this.setInfo(this.idClient);
+      this.isRegister = false;
+    }
+  }
+
+  setInfo(id: number) {
+    this.registerService.getCustomer(id).subscribe({
+      next: (res) => {
+        this.formRegister = this.formBuilder.group({
+          nome: [res.nome, [Validators.required]],
+          tipoFederativo: [res.tipoFederativo, [Validators.required]],
+          identificacaoFederal: [
+            res.identificacaoFederal,
+            [Validators.required],
+          ],
+          registro: [res.registro, Validators.required],
+          situacao: [res.situacao, Validators.required],
+        });
+        this.getListPhone();
+      },
+      error: (err) => {
+        this.backHome();
+        this.openError(err);
+      },
+    });
   }
 
   end(ended: boolean) {
+    if (!this.isRegister) {
+      this.getListPhone()
+    }
     this.disabledButton = !ended;
   }
 
-  setListPhone(list: Phone[]) {
-    this.obsListPhone.next(list);
+  telephoneSelect(phone: Phone) {
+    this.phone$.next(phone);
   }
-  openConfirm() {
+
+  phoneEdited(phone: Phone) {
+    this.phone$.next(phone);
+  }
+  delPhone(num : number){
+    this.remove$.next(num);
+  }
+  setListPhone(list: Phone[]) {
+    this.listPhone$.next(list);
+  }
+
+  getListPhone() {
+    this.registerService.getTelephones(this.idClient).subscribe({
+      next: (response) => {
+        this.listPhone$.next(response);
+      },
+    });
+  }
+
+  openSuccess() {
     this.dialog.open(DialogComponent, {
       data: {
         message: 'Cliente adicionado com sucesso',
@@ -57,8 +117,10 @@ export class RegisterComponent implements OnInit {
         true: 'OK',
       },
     });
+    this.backHome();
   }
-  openError(err:any) {
+
+  openError(err: any) {
     this.dialog.open(DialogComponent, {
       data: {
         message: `Cliente não foi adicionado: ${err.error.message}`,
@@ -68,21 +130,62 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  backHome(){
+  backHome() {
     this.router.navigate(['']);
   }
-  onRegister() {
-    this.registerService.register(new Custumer(
-      this.register.controls['nome'].value,
-      this.register.controls['tipoFederativo'].value,
-      this.register.controls['identificacaoFederal'].value.replace(/\D/g, ''),
-      this.register.controls['registro'].value,
-      this.register.controls['situacao'].value,
-      this.obsListPhone.value
-    )).subscribe(
-      {next:()=>{this.openConfirm()},
-      error:(err)=>{this.openError(err)}}
-    )
-    ;
+
+  onSubmit() {
+    this.isRegister ? this.register() : this.update();
+  }
+
+  register() {
+    this.registerService
+      .register(
+        new Custumer(
+          this.formRegister.controls['nome'].value,
+          this.formRegister.controls['tipoFederativo'].value,
+          this.formRegister.controls['identificacaoFederal'].value.replace(
+            /\D/g,
+            ''
+          ),
+          this.formRegister.controls['registro'].value,
+          this.formRegister.controls['situacao'].value,
+          this.listPhone$.value
+        )
+      )
+      .subscribe({
+        next: () => {
+          this.openSuccess();
+        },
+        error: (err) => {
+          this.openError(err);
+        },
+      });
+  }
+
+  update() {
+    this.registerService
+      .update(
+        new Custumer(
+          this.formRegister.controls['nome'].value,
+          this.formRegister.controls['tipoFederativo'].value,
+          this.formRegister.controls['identificacaoFederal'].value.replace(
+            /\D/g,
+            ''
+          ),
+          this.formRegister.controls['registro'].value,
+          this.formRegister.controls['situacao'].value,
+          this.listPhone$.getValue(),
+          this.idClient
+        ),
+      )
+      .subscribe({
+        next: () => {
+          this.openSuccess();
+        },
+        error: (err) => {
+          this.openError(err);
+        },
+      });
   }
 }

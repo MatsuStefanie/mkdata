@@ -1,6 +1,6 @@
-import { Custumer } from 'src/app/register/custumer';
+import { Param } from './../../param';
+import { TipoFederativo, Situacao } from './../../register/custumer';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TableService } from './../table.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
@@ -9,25 +9,30 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./filter-table-list.component.scss'],
 })
 export class FilterTableListComponent implements OnInit {
+  situacaoAtivo = Situacao.ATIVO;
+  situacaoInativo = Situacao.INATIVO;
+
   ativo: boolean;
   inativo: boolean;
-  situacao: boolean;
   cpf: boolean;
   cnpj: boolean;
-  tipo: boolean;
+  tipo?: boolean;
   formSearch!: FormGroup;
+  tipoCPF = TipoFederativo.CPF;
+  tipoCNPJ = TipoFederativo.CNPJ;
   @Output()
   filterText = new EventEmitter<string>();
   @Output()
-  filterMenu = new EventEmitter<{nome:string;value:string}>();
+  filterMenu = new EventEmitter<Param>();
+
+  @Output()
+  emitter= new EventEmitter<string>();
 
   constructor(private formBuilder: FormBuilder) {
     this.ativo = false;
     this.inativo = false;
-    this.situacao = false;
     this.cpf = false;
     this.cnpj = false;
-    this.tipo = false;
   }
 
   ngOnInit(): void {
@@ -35,44 +40,48 @@ export class FilterTableListComponent implements OnInit {
       busca: [null],
     });
   }
+
   filterByText(text: string) {
     this.filterText.emit(text);
   }
 
-  filterByMenuSituacao(situacao: boolean) {
-    if ((this.situacao = !situacao)) {
+  filterSituacao(situacao: Situacao) {
+    if (situacao == Situacao.ATIVO) {
+      this.inativo = false;
+    } else if (situacao == Situacao.INATIVO) {
+      this.ativo = false;
+    }
+
+    if (this.ativo || this.inativo) {
+      let filter;
       if (this.ativo) {
-        this.filterMenu.emit({ nome: 'situacao', value: 'ATIVO' });
+        filter = new Param('situacao', 'ATIVO');
       }
-      if (this.inativo) {
-        this.filterMenu.emit({ nome: 'situacao', value: 'INATIVO' });
+      if(this.inativo) {
+        filter = new Param('situacao', 'INATIVO');
       }
+      this.filterMenu.emit(filter);
+    } else {
+      this.emitter.emit('situacao');
     }
   }
 
-  filterByMenuTipo(tipo: boolean) {
-    if(this.tipo = !tipo){
-      if (this.cpf) {
-        this.filterMenu.emit({ nome: 'tipoFederativo', value: 'CPF' });
-      }
-      if (this.cnpj) {
-        this.filterMenu.emit({ nome: 'tipoFederativo', value: 'CNPJ' });
-      }
+  filterTipo(tipo: TipoFederativo) {
+    if (tipo == TipoFederativo.CPF) {
+      this.cnpj = false;
+    } else if (tipo == TipoFederativo.CNPJ) {
+      this.cpf = false;
+    }
+
+    if (this.cpf || this.cnpj) {
+      this.filterMenu.emit(new Param('tipoFederativo', tipo));
+    } else {
+      this.emitter.emit('tipoFederativo');
     }
   }
 
-  cleanFilter() {
+  cleanText() {
     this.formSearch.controls['busca'].setValue('');
-    this.filterText.emit('');
-  }
-
-  selectAll() {
-    this.ativo = true;
-    this.inativo = true;
-    this.cpf = true;
-    this.cnpj = true;
-    this.tipo = false;
-    this.situacao = false;
     this.filterText.emit('');
   }
 
@@ -81,8 +90,7 @@ export class FilterTableListComponent implements OnInit {
     this.inativo = false;
     this.cpf = false;
     this.cnpj = false;
-    this.tipo = false;
-    this.situacao = false;
-    this.filterText.emit('');
+    this.emitter.emit('situacao');
+    this.emitter.emit('tipoFederativo');
   }
 }

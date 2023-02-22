@@ -2,30 +2,34 @@ import { Observable } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Param } from '../param';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TableService {
   constructor(private httpClient: HttpClient) {}
+  params = new HttpParams();
 
-   constructParams(nome: string, value: string){
-    let params = new HttpParams();
-    params = params.append(nome, value);
-    return this.buscarLista(undefined, params);
+  removeParams(key: string) {
+    this.params = this.params.delete(key);
+    return this.buscarLista();
   }
 
-  buscarLista(text?: string, newParams?: HttpParams): Observable<any> {
-    let params = new HttpParams();
+  constructParams(param: Param) {
+    this.params = this.params.set(param.key, param.value);
+  }
+
+  buscarLista(newParams?: Param): Observable<any> {
     if (newParams) {
-      params = newParams;
-    }
-    if (text) {
-      params = params.append('nome', text);
+      this.constructParams(newParams);
     }
 
-    return this.httpClient.get(`${environment.baseUrl}/clientes`, { params });
+    return this.httpClient.get(`${environment.baseUrl}/clientes`, {
+      params: this.params,
+    });
   }
+
   deletarUser(id: number): Observable<number> {
     return this.httpClient.delete<number>(
       `${environment.baseUrl}/clientes/${id}`

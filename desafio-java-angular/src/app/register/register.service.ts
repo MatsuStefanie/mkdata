@@ -1,6 +1,7 @@
+import { Phone } from './telephone/phone';
 import { environment } from './../../environments/environment';
 
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Custumer } from './custumer';
@@ -15,18 +16,31 @@ export class RegisterService {
     return this.httpClient.post(`${environment.baseUrl}/clientes`, custumer);
   }
 
-  update(id: number, custumer: Custumer): Observable<any> {
+  getCustomer(id: number): Observable<Custumer> {
+    return this.httpClient.get<Custumer>(
+      `${environment.baseUrl}/clientes/${id}`
+    );
+  }
+
+  update(custumer: Custumer): Observable<any> {
+    this.updatePhone(custumer);
+
     return this.httpClient.put(
-      `${environment.baseUrl}/clientes/${id}`,
+      `${environment.baseUrl}/clientes/${custumer.id}`,
       custumer
     );
   }
 
-  updatePhone(id: number, custumer: Custumer) {
-    return this.httpClient.put(
-      `${environment.baseUrl}/clientes/${id}/telefones`,
-      custumer
-    );
+  updatePhone(custumer: Custumer) {
+    custumer.telefones.forEach((element) => {
+      this.httpClient
+        .put<Phone>(
+          `${environment.baseUrl}/clientes/${custumer.id}/telefones`,
+          element
+        )
+        .subscribe()
+        .unsubscribe();
+    });
   }
 
   deletePhone(id: number, idPhone: number) {
@@ -34,16 +48,17 @@ export class RegisterService {
       `${environment.baseUrl}/clientes/${id}/telefones/${idPhone}`
     );
   }
+
   createNewPhone(custumer: Custumer): Observable<any> {
     return this.httpClient.post(
       `${environment.baseUrl}/clientes/${custumer.id}/telefones`,
       custumer
     );
   }
-getTelephones(custumer: Custumer){
-  return this.httpClient.get(
-    `${environment.baseUrl}/clientes/${custumer.id}/telefones`,
 
-  );
-}
+  getTelephones(id: number) {
+    return this.httpClient.get<Phone[]>(
+      `${environment.baseUrl}/clientes/${id}/telefones`
+    );
+  }
 }

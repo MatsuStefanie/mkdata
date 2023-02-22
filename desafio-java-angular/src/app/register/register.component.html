@@ -1,7 +1,7 @@
 <div class="card" style="width: 18rem">
   <div class="card-body">
     <h3 class="card-title">Cadastrar novo</h3>
-    <form (ngSubmit)="onRegister()" [formGroup]="register">
+    <form (ngSubmit)="onSubmit()" [formGroup]="formRegister">
 
       <mat-form-field appearance="fill">
         <mat-label>Nome completo</mat-label>
@@ -18,39 +18,44 @@
         <mat-checkbox formControlName="situacao" name="situacao" color="primary"> Ativo</mat-checkbox>
       </div>
 
-      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===physicPerson">
+      <mat-form-field appearance="fill" *ngIf="formRegister.controls['tipoFederativo'].value===physicPerson">
         <mat-label>CPF</mat-label>
         <input matInput formControlName="identificacaoFederal" [name]="physicPerson" required>
       </mat-form-field>
-      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===legalPerson">
+      <mat-form-field appearance="fill" *ngIf="formRegister.controls['tipoFederativo'].value===legalPerson">
         <mat-label>CNPJ</mat-label>
         <input matInput formControlName="identificacaoFederal" [name]="legalPerson" required>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===physicPerson">
+      <mat-form-field appearance="fill" *ngIf="formRegister.controls['tipoFederativo'].value===physicPerson">
         <mat-label>RG</mat-label>
         <input matInput formControlName="registro" name="rg" required>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" *ngIf="register.controls['tipoFederativo'].value===legalPerson">
+      <mat-form-field appearance="fill" *ngIf="formRegister.controls['tipoFederativo'].value===legalPerson">
         <mat-label>IE</mat-label>
         <input matInput formControlName="registro" name="ie" required>
       </mat-form-field>
 
-      <div class="listPhone">
-        <app-telephone *ngIf="register.valid" (end)="end($event)" (telephone)="setListPhone($event)" />
-        <app-simple-table *ngIf="register.valid" [obsItems]="obsListPhone" />
+      <div class="listPhone" *ngIf="isRegister">
+        <app-telephone *ngIf="formRegister.valid" (end)="end($event)" (telephone)="setListPhone($event)" />
+        <app-simple-table *ngIf="formRegister.valid" [items$]="listPhone$" />
       </div>
 
-      <button mat-raised-button [disabled]="disabledButton" type="submit" color="primary">
+      <div class="listPhone" *ngIf="!isRegister">
+        <app-edit-simple-table [items$]="listPhone$" [item$]="phone$" (phone)="telephoneSelect($event)" />
+        <app-edit-telephone (emitterPhone)="phoneEdited($event)" [telephone$]="phone$" (emitDelete)="delPhone($event)"/>
+      </div>
+
+      <button mat-raised-button [disabled]="disabledButton" type="submit" color="primary" *ngIf="isRegister">
         Cadastrar
       </button>
+      <button mat-raised-button type="submit" color="primary" *ngIf="!isRegister">
+        Enviar
+      </button>
       <button mat-raised-button (click)="backHome()" style="margin-left: 2vw;">
-      Cancelar
-    </button>
+        Cancelar
+      </button>
     </form>
-
-
-
   </div>
 </div>
